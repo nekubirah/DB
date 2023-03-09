@@ -68,87 +68,35 @@ curl_close($ch);
 
 //do
 
-//var_dump($response);
-
-
-$response = json_decode($response, true);
-
-
-$m=0;
- foreach ($response['result'] as $h){
-        $bahnhof[$m] = $response['result'][$m]['name'];
-        $bahnhof[$m] = str_replace(" ( ","(",$bahnhof[$m]);
-        $bahnhof[$m] = str_replace(" (b ","-(bei ",$bahnhof[$m]);
-        $bahnhof[$m] = str_replace(" ) ",")",$bahnhof[$m]);
-        $bahnhof[$m] = str_replace(" )",")",$bahnhof[$m]);
-        $bahnhof[$m] = str_replace(" ","-",$bahnhof[$m]);
-
-        $m++;
- }
-
-
- 
-
-
-$items = array();
-$j = 0;
-$o = 0;
- if (isset($_GET['von'])) {
-    $search = $_GET['von'];
-    
-    foreach ($bahnhof as $an_item) {
-        if (stripos($an_item, $search)){
-            $items[$o] = $an_item;
-            $o++;
-            echo $items[$o];
-        }
-        $j++;
-    }
-   // echo json_encode($items);
-}
- //echo json_encode($bahnhof);
- //echo json_encode($response);
-
-
+$filteredResponse = json_decode($response);
 
 ?>
 
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post>
-  <label for="von">Von:
-  <br />  
-	<input type="string" list="vonliste">
-	<datalist id="vonliste">
-<?php
-echo gettype($bahnhof);
-    foreach($bahnhof as $bh) {
-        echo '<option value='. htmlspecialchars($bh) .'>';
-    }
-    ?>
-</datalist>
-</label>
-<br />  
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post>
-<label nach = "nach">  Nach:<br />  
-	<input type="string" list="nachliste">
-	<datalist id="nachliste">
-<?php
-echo gettype($bahnhof);
-    foreach($bahnhof as $bh) {
-        echo '<option value='. htmlspecialchars($bh) .'>';
-    }
-    ?>
-</datalist>
-</label>
-<br />  
-Datum:
-  <input type="Date" id="date" name="date" > 
-  <br>  
-Zeit:
-  <input type="time" id="time" name="time" > 
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+  <label for="von">Von:<br>
+    <input type="string" list="bahnhöfe">
+    <datalist id="bahnhöfe">
+      <?php
+        foreach($filteredResponse->result as $bahnhof) {
+          echo '<option value="' . $bahnhof->name . '">';
+        }
+      ?>
+    </datalist>
+  </label>
+  <br>
+  <label for="nach">Nach:<br>
+    <input type="string" list="bahnhöfe">
+  </label>
+  <br>
+  Datum:<br>
+  <input type="date" id="date" name="date">
+  <br>
+  Zeit:<br>
+  <input type="time" id="time" name="time">
   <br>
   <input type="submit" value="Ermitteln">
-  <br />
+</form>
 
 
 
