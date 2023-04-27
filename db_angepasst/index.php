@@ -112,7 +112,7 @@ foreach($filteredResponse->result as $bahnhof) {
                     style="border-color: gray; background-color: white; border-top-left-radius: 20px; border-bottom-left-radius: 20px;"><i
                         class="fa-regular fa-calendar"></i></span>
             </div>
-            <input type="date" style="border-left: none;" id="date" name="date" class="form-control" required  
+            <input type="date" style="border-left: none;" id="date" name="date" class="form-control" required readonly
                 min= <?php
                     date_default_timezone_set('Europe/Berlin');
                     $date_today = date('Y-m-d', time());
