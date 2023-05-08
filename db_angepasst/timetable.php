@@ -5,154 +5,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="timetableStyle.css">
   <script src="https://kit.fontawesome.com/2af9ff65b1.js" crossorigin="anonymous"></script>
   <title>DB Navigator</title>
-
-  <style>
-    .rounded-button {
-      border-radius: 50%;
-      padding: 0.4rem;
-      font-size: 1rem;
-      border: solid 1px;
-      background-color: white;
-      cursor: pointer;
-    }
-
-    .rounded-button:hover {
-      background-color: #444744;
-      color: white;
-    }
-
-    .unsereItemsBox {
-      width: 750px;
-      border-radius: 20px;
-    }
-
-    .unsereItems {
-      padding: 1rem;
-      border-bottom: solid 1px gray;
-    }
-
-    .unsereItems:hover {
-      background-color: #f8f9fa;
-    }
-
-    h1 {
-      font-family: inherit;
-      font-weight: 500;
-      line-height: 1.2;
-      margin: 2rem;
-      font-size: 2rem;
-      padding: 2rem;
-      margin-bottom: 0;
-      padding-bottom: 1.5rem;
-    }
-
-    h3 {
-      font-family: inherit;
-      font-weight: 500;
-      line-height: 1.2;
-      margin: 0;
-      padding: 0;
-    }
-
-    .header {
-      background-color: white;
-      position: sticky;
-      top: 0;
-      box-shadow: 0 5px 4px -6px black;
-    }
-
-    .sticky {
-      position: fixed;
-      top: 0;
-      width: 100%
-    }
-
-    .toggle {
-      position: relative;
-      display: inline-block;
-      width: 80px;
-      height: 28px;
-      font-size: 14px;
-    }
-
-    .toggle-input {
-      display: none;
-    }
-
-    .toggle-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #ccc;
-      border-radius: 14px;
-      transition: background-color 0.3s ease;
-    }
-
-    .toggle-label {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      transform: translateY(-50%);
-      text-align: center;
-      pointer-events: none;
-    }
-
-    .toggle-label:before,
-    .toggle-label:after {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
-    .toggle-label:before {
-      content: attr(data-off);
-      right: 0.4rem;
-      opacity: 1;
-    }
-
-    .toggle-label:after {
-      content: attr(data-on);
-      left: 0.4rem;
-      color: #757575;
-      opacity: 0;
-    }
-
-    .toggle-input:checked~.toggle-bg {
-      background-color: #444744;
-    }
-
-    .toggle-input:checked~.toggle-label:before {
-      color: #757575;
-      opacity: 0;
-    }
-
-    .toggle-input:checked~.toggle-label:after {
-      color: #fff;
-      opacity: 1;
-    }
-
-    .toggle-handle {
-      position: absolute;
-      top: 50%;
-      left: 4px;
-      width: 20px;
-      height: 20px;
-      background-color: #fff;
-      border-radius: 50%;
-      transform: translateY(-50%);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      transition: left 0.3s ease;
-    }
-
-    .toggle-input:checked~.toggle-handle {
-      left: calc(100% - 4px - 20px);
-    }
-  </style>
 </head>
 
 <body>
@@ -237,7 +92,6 @@
   preg_match_all('!\d+!', $gleiseWithFahrstuhlString, $gleiseWithFahrstuhlArray);
 
 
-
   //datum Übergabe
   $date_i = $_POST["date"];
   $date = str_replace("-", "", $date_i);
@@ -276,7 +130,7 @@
     <div class="unsereItemsBox">
       <div class="header" style="text-align: center;">
         <h1>
-          <?php echo $xml['station']; ?>
+          <?php echo $ergebnis->name; ?>
         </h1>
 
         <div
@@ -284,7 +138,7 @@
           <form action="timetable.php" method="post">
             <?php
             $value_encoded = htmlspecialchars($xml['station']);
-            echo '<input type="hidden" id="vonListe" name="vonListe" value= "' . $value_encoded . '">';
+            echo '<input type="hidden" id="vonListe" name="vonListe" value= "' . $ergebnis->name . '">';
             ?>
             <input type="hidden" id="date" name="date" value=<?php echo $date_i ?>>
             <input type="hidden" id="time" name="time" value=<?php echo ($time[0] - 1) . ":" . $time[1] ?>>
@@ -300,7 +154,7 @@
               ?>
 
               <button type="submit" class="rounded-button" <?php echo $disabled; ?>>
-                <i class="fa-solid fa-arrow-right fa-rotate-180"></i>
+                <i class="fa-solid fa-arrow-right fa-rotate-180"></i> Früher
               </button>
 
 
@@ -321,7 +175,7 @@
           <form action="timetable.php" method="post">
             <?php
             $value_encoded = htmlspecialchars($xml['station']);
-            echo '<input type="hidden" id="vonListe" name="vonListe" value= "' . $value_encoded . '">';
+            echo '<input type="hidden" id="vonListe" name="vonListe" value= "' . $ergebnis->name . '">';
             ?>
             <input type="hidden" id="date" name="date" value=<?php echo $date_i ?>>
             <input type="hidden" id="time" name="time" value=<?php echo ($time[0] + 1) . ":" . $time[1] ?>>
@@ -336,7 +190,7 @@
               }
               ?>
               <button type="submit" class="rounded-button" <?php echo $disabled; ?>>
-                <i class="fa-solid fa-arrow-right"></i>
+                Später <i class="fa-solid fa-arrow-right"></i>
               </button>
 
 
@@ -364,9 +218,24 @@
             <div>
               <?php
               $stationenVon = explode("|", $s->ar['ppth']);
-              echo "<h3>" . $s->tl['c'] . " " . $s->tl['n'] . " aus " . $stationenVon[0] . " </h3> <br>";
+
+              if ($s->dp['l'] != "") {
+                $unserTrainNumber = $s->dp['l'];
+              } elseif ($s->ar['l'] != "") {
+                $unserTrainNumber = $s->ar['l'];
+              } else {
+                $unserTrainNumber = $s->tl['n'];
+              }
+
+              echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " aus " . $stationenVon[0] . " nach " . end($stationenVon) . " </h3> <br>";
               echo "Ankunft Zeit: " . substr($s->ar['pt'], 6, 2) . ":" . substr($s->ar['pt'], 8, 2) . "<br>";
-              echo "Ankunfts Gleis: " . $s->ar['pp'] . "<br>";
+
+              if ($s->ar['pp'] == "") {
+                echo "Ankunft Gleis: " . $s->ar['l'] . "<br>";
+              } else {
+                echo "Ankunft Gleis: " . $s->ar['pp'] . "<br>";
+              }
+
               preg_match_all('!\d+!', (string) $s->ar['pp'], $gleisOhneBuchstabeEins);
               if (in_array($gleisOhneBuchstabeEins[0][0], $gleiseWithFahrstuhlArray[0])) {
                 ?>
@@ -392,9 +261,22 @@
           <div class="unsereItems" id="abfahrt">
             <?php
             $stationen = explode("|", $s->dp['ppth']);
-            echo "<h3>" . $s->tl['c'] . " " . $s->tl['n'] . " nach " . end($stationen) . "</h3> <br>";
+
+            if ($s->dp['l'] != "") {
+              $unserTrainNumber = $s->dp['l'];
+            } elseif ($s->ar['l'] != "") {
+              $unserTrainNumber = $s->ar['l'];
+            } else {
+              $unserTrainNumber = $s->tl['n'];
+            }
+
+            echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " nach " . end($stationen) . " aus " . $stationen[0] . "</h3> <br>";
             echo "Abfahrt Zeit: " . substr($s->dp['pt'], 6, 2) . ":" . substr($s->dp['pt'], 8, 2) . "<br>";
-            echo "Abfahrts Gleis: " . $s->dp['pp'] . "<br>";
+            if ($s->dp['pp'] == "") {
+              echo "Ankunft Gleis: " . $s->dp['l'] . "<br>";
+            } else {
+              echo "Ankunft Gleis: " . $s->dp['pp'] . "<br>";
+            }
             preg_match_all('!\d+!', (string) $s->dp['pp'], $gleisOhneBuchstabeZwei);
             if (in_array($gleisOhneBuchstabeZwei[0][0], $gleiseWithFahrstuhlArray[0])) {
               ?>

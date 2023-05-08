@@ -2,46 +2,8 @@
     <link href="https://fonts.googleapis.com/css2?family=<FONT-NAME>&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
         integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="indexStyle.css">
     <script src="https://kit.fontawesome.com/2af9ff65b1.js" crossorigin="anonymous"></script>
-    <style>
-        form {
-            width: 500px;
-            margin: 20px auto;
-            text-align: center;
-            padding: 20px;
-        }
-
-        label,
-        input[type="submit"] {
-            display: block;
-            margin: 10px 0;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        input[type="text"],
-        input[type="date"],
-        input[type="time"] {
-            font-size: 18px;
-            border: 1px solid gray;
-            width: 100%;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;‚
-        }
-
-        input[type="submit"] {
-            background-color: #f8f9fa;
-            color: #3c4043;
-            border: 1px solid #f8f9fa;
-            border-radius: 4px;
-            padding: 5px 15px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            box-shadow: 0px 1px 2px gray;
-        }
-    </style>
 
     <title>DB Navigator</title>
 
