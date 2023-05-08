@@ -36,31 +36,31 @@
   //do
   $response = json_decode($response);
 
-// Vergleich aller Bahnhöfe mit dem, welchen der Nutzer ausgewählt hat und speichern der entsprechenden Parameter  
-$foundOneToOne= false;
-$foundPartial= false;
+  // Vergleich aller Bahnhöfe mit dem, welchen der Nutzer ausgewählt hat und speichern der entsprechenden Parameter  
+  $foundOneToOne = false;
+  $foundPartial = false;
   foreach ($response->result as $ergebnis) {
     if (strcmp($ergebnis->name, $_POST["vonListe"]) == 0) {
-      $foundOneToOne= true;
+      $foundOneToOne = true;
       $foundPartial = true;
       //echo "1:1";
       break;
     }
   }
-// Teilabfrage falls Nutzer nicht genau den Bahnhof angegeben hat (ist Case-Sensitive daher wird alles lowercased). 
-if($foundOneToOne == false){
-  // echo "1:1 false";
-  foreach ($response->result as $ergebnis) {
-    if (str_contains(strtolower($ergebnis->name), strtolower($_POST["vonListe"])) !== false) { 
-      $foundPartial= true;
-      //echo "teilübereinstimmung: ".$ergebnis->name ;
-      break;
-    } 
-  } 
-}
-if ($foundPartial !== true){
-  echo "!Es wurde kein übereinstimmender Bahnhof gefunden!";
-}
+  // Teilabfrage falls Nutzer nicht genau den Bahnhof angegeben hat (ist Case-Sensitive daher wird alles lowercased). 
+  if ($foundOneToOne == false) {
+    // echo "1:1 false";
+    foreach ($response->result as $ergebnis) {
+      if (str_contains(strtolower($ergebnis->name), strtolower($_POST["vonListe"])) !== false) {
+        $foundPartial = true;
+        //echo "teilübereinstimmung: ".$ergebnis->name ;
+        break;
+      }
+    }
+  }
+  if ($foundPartial !== true) {
+    echo "!Es wurde kein übereinstimmender Bahnhof gefunden!";
+  }
 
 
 
@@ -140,7 +140,7 @@ if ($foundPartial !== true){
   $xml = simplexml_load_string($response2);
   ?>
 
-<script>//Darstellung der Webseite angefangen mit dem Namen des Bahnhofes</script>
+  <script>//Darstellung der Webseite angefangen mit dem Namen des Bahnhofes</script>
 
 
   <div style="display: flex; align-items: center; justify-content: center; font-family: 'Roboto', sans-serif;">
@@ -223,12 +223,11 @@ if ($foundPartial !== true){
 
       <?php
 
-/*Hier werden nun nach und nach die einzelnen Züge, samt Gleis und Zeit ausgegeben.
-Ebenfalls wird hier ein entsprechendes Symbol angezeigt, wenn es einen Fahrstuhl gibt.
-Ein entsprechender Schieberegler filtert die Ergebnisse nach einfahrenden und abfahrenden Zügen. 
-
-Für genauere Erklärung der einzelnen abfragen (z.B. $s->dp[l]) empfiehlt es sich die Dokumentation der API 
-auf der Webseite der DB zu Hilfe zu nehmen.*/
+      /*Hier werden nun nach und nach die einzelnen Züge, samt Gleis und Zeit ausgegeben.
+      Ebenfalls wird hier ein entsprechendes Symbol angezeigt, wenn es einen Fahrstuhl gibt.
+      Ein entsprechender Schieberegler filtert die Ergebnisse nach einfahrenden und abfahrenden Zügen. 
+      Für genauere Erklärung der einzelnen abfragen (z.B. $s->dp[l]) empfiehlt es sich die Dokumentation der API 
+      auf der Webseite der DB zu Hilfe zu nehmen.*/
       foreach ($xml->s as $s) {
         //ar steht in diesem Fall für "Arrival", bzw. zu deutsch Ankuft
         if (isset($s->ar)) {
@@ -246,14 +245,14 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
                 $unserTrainNumber = $s->tl['n'];
               }
 
-              echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " aus " . $stationenVon[0] ." </h3> <br>";
+              echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " aus " . $stationenVon[0] . " </h3> <br>";
               echo "Ankunft Zeit: " . substr($s->ar['pt'], 6, 2) . ":" . substr($s->ar['pt'], 8, 2) . "<br>";
 
-              if ($s->ar['pp'] !== "") {
+              if ($s->ar['pp'] != "") {
                 echo "Ankunft Gleis: " . $s->ar['pp'] . "<br>";
-              } else if ($s->ar['l'] !== ""){
+              } else if ($s->ar['l'] != "") {
                 echo "Ankunft Gleis: " . $s->ar['l'] . "<br>";
-              }else {
+              } else {
                 echo "Ankunft Gleis: n.a.";
               }
 
@@ -261,7 +260,12 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
               if (in_array($gleisOhneBuchstabeEins[0][0], $gleiseWithFahrstuhlArray[0])) {
                 ?>
                 <div style="align-items: center;">
-                  <i title="Fahrstuhl verfügbar!" class="fa-regular fa-elevator" style="margin-top: 0.33rem;"></i>
+                  <svg title="Fahrstuhl verfügbar!" style="height: 1.4rem; width: 1.4rem; margin-top: 0.33rem;"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                    <path
+                      d="M132.7 4.7l-64 64c-4.6 4.6-5.9 11.5-3.5 17.4s8.3 9.9 14.8 9.9H208c6.5 0 12.3-3.9 14.8-9.9s1.1-12.9-3.5-17.4l-64-64c-6.2-6.2-16.4-6.2-22.6 0zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V192c0-35.3-28.7-64-64-64H64zm96 96a48 48 0 1 1 0 96 48 48 0 1 1 0-96zM80 400c0-26.5 21.5-48 48-48h64c26.5 0 48 21.5 48 48v16c0 17.7-14.3 32-32 32H112c-17.7 0-32-14.3-32-32V400zm192 0c0-26.5 21.5-48 48-48h64c26.5 0 48 21.5 48 48v16c0 17.7-14.3 32-32 32H304c-17.7 0-32-14.3-32-32V400zm32-128a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zM356.7 91.3c6.2 6.2 16.4 6.2 22.6 0l64-64c4.6-4.6 5.9-11.5 3.5-17.4S438.5 0 432 0H304c-6.5 0-12.3 3.9-14.8 9.9s-1.1 12.9 3.5 17.4l64 64z" />
+                  </svg>
                 </div>
                 <?php
               }
@@ -294,20 +298,24 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
             }
 
             echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " nach " . end($stationen) .
-            "</h3> <br>";
+              "</h3> <br>";
             echo "Abfahrt Zeit: " . substr($s->dp['pt'], 6, 2) . ":" . substr($s->dp['pt'], 8, 2) . "<br>";
-            if ($s->dp['pp'] !== "") {
+            if ($s->dp['pp'] != "") {
               echo "Ankunft Gleis: " . $s->dp['pp'] . "<br>";
-            } else if ($s->dp['l'] !== ""){
+            } else if ($s->dp['l'] != "") {
               echo "Ankunft Gleis: " . $s->dp['l'] . "<br>";
-            }
-            else {
+            } else {
               echo "Ankunft Gleis: n.a.";
             }
             preg_match_all('!\d+!', (string) $s->dp['pp'], $gleisOhneBuchstabeZwei);
             if (in_array($gleisOhneBuchstabeZwei[0][0], $gleiseWithFahrstuhlArray[0])) {
               ?>
-              <i title="Fahrstuhl verfügbar!" class="fa-regular fa-elevator" style="margin-top: 0.33rem;"></i>
+              <svg title="Fahrstuhl verfügbar!" style="height: 1.4rem; width: 1.4rem; margin-top: 0.33rem;"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+                <path
+                  d="M132.7 4.7l-64 64c-4.6 4.6-5.9 11.5-3.5 17.4s8.3 9.9 14.8 9.9H208c6.5 0 12.3-3.9 14.8-9.9s1.1-12.9-3.5-17.4l-64-64c-6.2-6.2-16.4-6.2-22.6 0zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V192c0-35.3-28.7-64-64-64H64zm96 96a48 48 0 1 1 0 96 48 48 0 1 1 0-96zM80 400c0-26.5 21.5-48 48-48h64c26.5 0 48 21.5 48 48v16c0 17.7-14.3 32-32 32H112c-17.7 0-32-14.3-32-32V400zm192 0c0-26.5 21.5-48 48-48h64c26.5 0 48 21.5 48 48v16c0 17.7-14.3 32-32 32H304c-17.7 0-32-14.3-32-32V400zm32-128a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zM356.7 91.3c6.2 6.2 16.4 6.2 22.6 0l64-64c4.6-4.6 5.9-11.5 3.5-17.4S438.5 0 432 0H304c-6.5 0-12.3 3.9-14.8 9.9s-1.1 12.9 3.5 17.4l64 64z" />
+              </svg>
               <?php
             }
             ?>
@@ -325,7 +333,7 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
 </html>
 
 <script>
-// Hier das entsprechende Script um zu entscheiden, ob Ankunft oder Abfahrt vom Nutzer ausgewählt wurde und hierrauf folgend die entsprechenden Daten anzuzeigen.
+  // Hier das entsprechende Script um zu entscheiden, ob Ankunft oder Abfahrt vom Nutzer ausgewählt wurde und hierrauf folgend die entsprechenden Daten anzuzeigen.
 
   document.querySelectorAll("#ankunft").forEach(function (item) {
     item.style.display = "none";
@@ -352,5 +360,4 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
     }, this);
   });
 
-</script>
-
+</script>‚
