@@ -16,7 +16,7 @@
 
   <?php
 
-  //Curl
+  //Curl abfrage zur API der Deutschen Bahn mit allen Daten der Stadtionen in Deutschland
   $ch = curl_init("https://apis.deutschebahn.com/db-api-marketplace/apis/station-data/v2/stations");
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt(
@@ -34,19 +34,37 @@
   curl_close($ch);
 
   //do
-  
   $response = json_decode($response);
-  // OK, keine Ahnung, warum das geht, aber wir haben aus versehen die Zählvariable ergebnis im weiteren Code verwendet und es funktioniert
-  foreach ($response->result as $ergebnis) {
 
+// Vergleich aller Bahnhöfe mit dem, welchen der Nutzer ausgewählt hat und speichern der entsprechenden Parameter  
+$foundOneToOne= false;
+$foundPartial= false;
+  foreach ($response->result as $ergebnis) {
     if (strcmp($ergebnis->name, $_POST["vonListe"]) == 0) {
+      $foundOneToOne= true;
+      $foundPartial = true;
+      echo "1:1";
       break;
     }
-
   }
+// Teilabfrage falls Nutzer nicht genau den Bahnhof angegeben hat (ist Case-Sensitive daher wird alles lowercased). 
+if($foundOneToOne == false){
+  // echo "1:1 false";
+  foreach ($response->result as $ergebnis) {
+    if (str_contains(strtolower($ergebnis->name), strtolower($_POST["vonListe"])) !== false) { 
+      $foundPartial= true;
+      //echo "teilübereinstimmung: ".$ergebnis->name ;
+      break;
+    } 
+  } 
+}
+if ($foundPartial !== true){
+  echo "!Es wurde kein übereinstimmender Bahnhof gefunden!";
+}
 
 
-  //Facilities aka Fahrstühle (elevator)
+
+  //Curl abfrage der Facilities aka Fahrstühle (elevator)
   $curl3 = curl_init();
 
   curl_setopt_array($curl3, [
@@ -69,9 +87,6 @@
 
   curl_close($curl3);
 
-
-
-
   if ($err) {
     echo "cURL Error #:" . $err;
   } else {
@@ -80,7 +95,7 @@
 
 
 
-  // Welches Gleis hat welche "Facility"
+  // Vergleich: Welches Gleis hat welche "Facility"
   $response3 = json_decode($response3);
   $gleiseWithFahrstuhlString = "";
   foreach ($response3->facilities as $facilities) {
@@ -92,16 +107,16 @@
   preg_match_all('!\d+!', $gleiseWithFahrstuhlString, $gleiseWithFahrstuhlArray);
 
 
-  //datum Übergabe
+  //Datums Übergabe
   $date_i = $_POST["date"];
   $date = str_replace("-", "", $date_i);
   $date = substr($date, 2);
 
-  //time Übergabe
+  //Zeit Übergabe
   $time_i = $_POST["time"];
   $time = explode(":", $time_i);
 
-  //Abfrage der Time Tables
+  //Abfrage der "Time Tables" API mit entsprechenden Daten wie Datum, Zeit und Eva Nummer des Bahnhofs,welchen der Benutzer ausgewählt hat
   $curl2 = curl_init();
   $link = "https://apis.deutschebahn.com/db-api-marketplace/apis/timetables/v1/plan/" . $ergebnis->evaNumbers[0]->number . "/" . $date . "/" . $time[0];
   curl_setopt_array($curl2, [
@@ -125,6 +140,9 @@
   $xml = simplexml_load_string($response2);
   ?>
 
+<script>//Darstellung der Webseite angefangen mit dem Namen des Bahnhofes</script>
+
+
   <div style="display: flex; align-items: center; justify-content: center; font-family: 'Roboto', sans-serif;">
 
     <div class="unsereItemsBox">
@@ -133,19 +151,21 @@
           <?php echo $ergebnis->name; ?>
         </h1>
 
+        <script>//Früher-Button (um Ergebnisse 1h Früher an diesem Bahnhof auszugeben)</script>
+        <script>//Übergabe von "hidden" Variablen, welche für den Aufruf der Seite mit früherer Zeit benötigt wird</script>
+
         <div
           style="display: flex;justify-content: space-between; padding-right: 1rem;padding-left: 1rem; padding-bottom: 0.5rem; align-items: center;">
           <form action="timetable.php" method="post">
             <?php
-            $value_encoded = htmlspecialchars($xml['station']);
             echo '<input type="hidden" id="vonListe" name="vonListe" value= "' . $ergebnis->name . '">';
             ?>
             <input type="hidden" id="date" name="date" value=<?php echo $date_i ?>>
             <input type="hidden" id="time" name="time" value=<?php echo ($time[0] - 1) . ":" . $time[1] ?>>
 
-
             <div>
               <?php
+              //Einschränkung des Buttons, um zeiten früher als 3 Uhr nicht anzuzeigen, da diese von der API nicht ausgegeben werden
               if ($time[0] <= 4) {
                 $disabled = "disabled";
               } else {
@@ -161,6 +181,7 @@
             </div>
           </form>
 
+          <script>//Schieberegler für Ankunft und Abfahrt</script>
 
           <label class="toggle">
             <input class="toggle-input" type="checkbox" id="toggleCheckbox" />
@@ -170,11 +191,11 @@
           </label>
 
 
-          <?php /*  später button:  */?>
+          <script>//Später-Button (um Ergebnisse 1h Später an diesem Bahnhof auszugeben)</script>
+          <script>//Auch hier: Übergabe von "hidden" Variablen, welche für den Aufruf der Seite mit späteren Zeit benötigt wird</script>
 
           <form action="timetable.php" method="post">
             <?php
-            $value_encoded = htmlspecialchars($xml['station']);
             echo '<input type="hidden" id="vonListe" name="vonListe" value= "' . $ergebnis->name . '">';
             ?>
             <input type="hidden" id="date" name="date" value=<?php echo $date_i ?>>
@@ -183,6 +204,7 @@
 
             <div>
               <?php
+              //Einschränkung des Buttons, um zeiten später als 24 Uhr nicht anzuzeigen für diesen Tag. (da der Tag nur 24h hat)
               if ($time[0] >= 23) {
                 $disabled = "disabled";
               } else {
@@ -192,26 +214,23 @@
               <button type="submit" class="rounded-button" <?php echo $disabled; ?>>
                 Später <i class="fa-solid fa-arrow-right"></i>
               </button>
-
-
             </div>
           </form>
         </div>
-
-
-
-
       </div>
       <?php
       ?>
 
-
-
-
-
       <?php
-      foreach ($xml->s as $s) {
 
+/*Hier werden nun nach und nach die einzelnen Züge, samt Gleis und Zeit ausgegeben.
+Ebenfalls wird hier ein entsprechendes Symbol angezeigt, wenn es einen Fahrstuhl gibt.
+Ein entsprechender Schieberegler filtert die Ergebnisse nach einfahrenden und abfahrenden Zügen. 
+
+Für genauere Erklärung der einzelnen abfragen (z.B. $s->dp[l]) empfiehlt es sich die Dokumentation der API 
+auf der Webseite der DB zu Hilfe zu nehmen.*/
+      foreach ($xml->s as $s) {
+        //ar steht in diesem Fall für "Arrival", bzw. zu deutsch Ankuft
         if (isset($s->ar)) {
           ?>
           <div class="unsereItems" id="ankunft">
@@ -256,6 +275,7 @@
 
 
         <?php
+        //dp steht in deisem falle für "Departure" bzw. zu deutsch Abfahrt
         if (isset($s->dp)) {
           ?>
           <div class="unsereItems" id="abfahrt">
@@ -287,23 +307,18 @@
           </div>
           <?php
         }
-
       }
       ?>
 
-
     </div>
   </div>
-
-
-
-
-
 </body>
 
 </html>
 
 <script>
+// Hier das entsprechende Script um zu entscheiden, ob Ankunft oder Abfahrt vom Nutzer ausgewählt wurde und hierrauf folgend die entsprechenden Daten anzuzeigen.
+
   document.querySelectorAll("#ankunft").forEach(function (item) {
     item.style.display = "none";
   });
