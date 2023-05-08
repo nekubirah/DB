@@ -246,13 +246,15 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
                 $unserTrainNumber = $s->tl['n'];
               }
 
-              echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " aus " . $stationenVon[0] . " </h3> <br>";
+              echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " aus " . $stationenVon[0] ." </h3> <br>";
               echo "Ankunft Zeit: " . substr($s->ar['pt'], 6, 2) . ":" . substr($s->ar['pt'], 8, 2) . "<br>";
 
-              if ($s->ar['pp'] == "") {
-                echo "Ankunft Gleis: " . $s->ar['l'] . "<br>";
-              } else {
+              if ($s->ar['pp'] !== "") {
                 echo "Ankunft Gleis: " . $s->ar['pp'] . "<br>";
+              } else if ($s->ar['l'] !== ""){
+                echo "Ankunft Gleis: " . $s->ar['l'] . "<br>";
+              }else {
+                echo "Ankunft Gleis: n.a.";
               }
 
               preg_match_all('!\d+!', (string) $s->ar['pp'], $gleisOhneBuchstabeEins);
@@ -281,6 +283,7 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
           <div class="unsereItems" id="abfahrt">
             <?php
             $stationen = explode("|", $s->dp['ppth']);
+            $station_ar = explode("|", $s->ar['ppth']);
 
             if ($s->dp['l'] != "") {
               $unserTrainNumber = $s->dp['l'];
@@ -290,12 +293,16 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
               $unserTrainNumber = $s->tl['n'];
             }
 
-            echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " nach " . end($stationen) . "</h3> <br>";
+            echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " nach " . end($stationen) .
+            "</h3> <br>";
             echo "Abfahrt Zeit: " . substr($s->dp['pt'], 6, 2) . ":" . substr($s->dp['pt'], 8, 2) . "<br>";
-            if ($s->dp['pp'] == "") {
-              echo "Ankunft Gleis: " . $s->dp['l'] . "<br>";
-            } else {
+            if ($s->dp['pp'] !== "") {
               echo "Ankunft Gleis: " . $s->dp['pp'] . "<br>";
+            } else if ($s->dp['l'] !== ""){
+              echo "Ankunft Gleis: " . $s->dp['l'] . "<br>";
+            }
+            else {
+              echo "Ankunft Gleis: n.a.";
             }
             preg_match_all('!\d+!', (string) $s->dp['pp'], $gleisOhneBuchstabeZwei);
             if (in_array($gleisOhneBuchstabeZwei[0][0], $gleiseWithFahrstuhlArray[0])) {
@@ -312,6 +319,7 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
 
     </div>
   </div>
+
 </body>
 
 </html>
@@ -345,3 +353,4 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
   });
 
 </script>
+
