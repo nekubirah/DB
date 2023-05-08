@@ -246,7 +246,7 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
                 $unserTrainNumber = $s->tl['n'];
               }
 
-              echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " aus " . $stationenVon[0] . " nach " . end($stationenVon) . " </h3> <br>";
+              echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " aus " . $stationenVon[0] . " </h3> <br>";
               echo "Ankunft Zeit: " . substr($s->ar['pt'], 6, 2) . ":" . substr($s->ar['pt'], 8, 2) . "<br>";
 
               if ($s->ar['pp'] == "") {
@@ -290,7 +290,7 @@ auf der Webseite der DB zu Hilfe zu nehmen.*/
               $unserTrainNumber = $s->tl['n'];
             }
 
-            echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " nach " . end($stationen) . " aus " . $stationen[0] . "</h3> <br>";
+            echo "<h3>" . $s->tl['c'] . " " . $unserTrainNumber . " nach " . end($stationen) . "</h3> <br>";
             echo "Abfahrt Zeit: " . substr($s->dp['pt'], 6, 2) . ":" . substr($s->dp['pt'], 8, 2) . "<br>";
             if ($s->dp['pp'] == "") {
               echo "Ankunft Gleis: " . $s->dp['l'] . "<br>";
