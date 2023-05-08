@@ -1,4 +1,6 @@
 <head>
+
+    <script>//Initialisierung der Fonts (Schrift) -> in diesem Fall von Google</script>
     <link href="https://fonts.googleapis.com/css2?family=<FONT-NAME>&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
         integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -12,6 +14,7 @@
 </head>
 <?php
 
+//Abfrage aller Daten der Stadtionen Deutshclands mit DB-API "Station-Data"
 $ch = curl_init("https://apis.deutschebahn.com/db-api-marketplace/apis/station-data/v2/stations");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -31,6 +34,9 @@ curl_close($ch);
 //do
 
 $filteredResponse = json_decode($response);
+
+//Test ausgabe der angefragten Daten zur Überprüfung
+
 //var_dump($filteredResponse);
 /*
 foreach($filteredResponse->result as $bahnhof) {
@@ -39,6 +45,13 @@ foreach($filteredResponse->result as $bahnhof) {
     echo "<br>";
   }
 */
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $InputValue = $_POST["vonListe"]; // liest den Wert des Eingabefelds aus
+    // hier können Sie den Wert von $myInputValue verwenden
+  }
+
 ?>
 <div style="display: flex; align-items: center; justify-content: center; height: 100vh;">
 
@@ -48,6 +61,9 @@ foreach($filteredResponse->result as $bahnhof) {
 
         <datalist id="bahnhöfe">
             <?php
+            /*Hier findet die Auflistung aller Bahnhöfe statt.
+            Diese werden in einer Datalist angezeigt, sodass der Nutzer entsprechende Bahnhöfe vorgeschlagen bekommt.*/
+
             foreach ($filteredResponse->result as $bahnhof) {
                 echo '<option value="' . $bahnhof->name . '">';
             }
@@ -57,6 +73,7 @@ foreach($filteredResponse->result as $bahnhof) {
             ?>
         </datalist>
 
+        <script>//Initialisierung der Datalist und anzeige für den Nutzer in form einer Text eingabe</script>
 
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -68,6 +85,7 @@ foreach($filteredResponse->result as $bahnhof) {
                 name="vonListe" required>
         </div>
 
+        <script>//Initialisierung Datums Abfrage.</script>
 
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -77,15 +95,17 @@ foreach($filteredResponse->result as $bahnhof) {
             </div>
             <input type="date" style="border-left: none;" id="date" name="date" class="form-control" required readonly
                 min=<?php
+
+/*An dieser Stellen wird das Datum entsprechend eingeschränkt, da die API nur in einem 24Stunden Intervall 
+am Tag der Abfrage Daten zurückgibt.*/ 
+
                 date_default_timezone_set('Europe/Berlin');
                 $date_today = date('Y-m-d', time());
                 echo $date_today;
                 ?> max=<?php
                  date_default_timezone_set('Europe/Berlin');
-                 $datetime = new DateTime('tomorrow');
-                 echo $datetime->format('Y-m-d');
-                 /*$date_today = date('Y-m-d', time());
-                 echo $date_today;*/
+                 $date_today = date('Y-m-d', time());
+                 echo $date_today;
                  ?> value=<?php
                   date_default_timezone_set('Europe/Berlin');
                   $date_today = date('Y-m-d', time());
@@ -93,6 +113,8 @@ foreach($filteredResponse->result as $bahnhof) {
                   ?>>
 
 
+<script>/*Initialisierung der Zeit Abfrage mit Einschränkung von "03:00" Uhr,
+ da die API nur im Zeitraum ab 3 Uhr Daten übermittelt*/</script>
 
 
             <div class="input-group-append">
@@ -104,8 +126,9 @@ foreach($filteredResponse->result as $bahnhof) {
                 min="03:00">
         </div>
 
+
         <div style="width: 100%; display:flex; justify-content: center;">
-            <input type="submit" value="Absenden">
+            <input type="submit" value="Absenden" >
         </div>
     </form>
 
