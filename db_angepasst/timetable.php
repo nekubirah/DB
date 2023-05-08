@@ -43,7 +43,7 @@ $foundPartial= false;
     if (strcmp($ergebnis->name, $_POST["vonListe"]) == 0) {
       $foundOneToOne= true;
       $foundPartial = true;
-      echo "1:1";
+      //echo "1:1";
       break;
     }
   }
