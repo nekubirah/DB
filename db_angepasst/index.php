@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="indexStyle.css">
     <script src="https://kit.fontawesome.com/2af9ff65b1.js" crossorigin="anonymous"></script>
 
-    <title>DB Navigator</title>
+    <title>Bahnhöf</title>
 
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -17,11 +17,14 @@
 //Abfrage aller Daten der Stadtionen Deutshclands mit DB-API "Station-Data"
 $ch = curl_init("https://apis.deutschebahn.com/db-api-marketplace/apis/station-data/v2/stations");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Accept: application/json',
-    'DB-Client-Id: fef7e2d16dd19ee4dc3de32274c66d60',
-    'DB-Api-Key: 2f97bf22fb1e4b02643f0ce3fc06bca8'
-)
+curl_setopt(
+    $ch,
+    CURLOPT_HTTPHEADER,
+    array(
+        'Accept: application/json',
+        'DB-Client-Id: fef7e2d16dd19ee4dc3de32274c66d60',
+        'DB-Api-Key: 2f97bf22fb1e4b02643f0ce3fc06bca8'
+    )
 );
 
 
@@ -50,14 +53,14 @@ foreach($filteredResponse->result as $bahnhof) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $InputValue = $_POST["vonListe"]; // liest den Wert des Eingabefelds aus
     // hier können Sie den Wert von $myInputValue verwenden
-  }
+}
 
 ?>
 <div style="display: flex; align-items: center; justify-content: center; height: 100vh;">
 
     <form action="timetable.php" method="post" style="width: 500px; margin: 20px auto;">
 
-        <h1 style="margin: 2rem; font-size: 4rem;">Bahnhof</h1>
+        <h1 style="margin: 2rem; font-size: 4rem;">Bahnhöf</h1>
 
         <datalist id="bahnhöfe">
             <?php
@@ -96,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="date" style="border-left: none;" id="date" name="date" class="form-control" required readonly
                 min=<?php
 
-/*An dieser Stellen wird das Datum entsprechend eingeschränkt, da die API nur in einem 24Stunden Intervall 
-am Tag der Abfrage Daten zurückgibt.*/ 
+                /*An dieser Stellen wird das Datum entsprechend eingeschränkt, da die API nur in einem 24Stunden Intervall 
+                am Tag der Abfrage Daten zurückgibt.*/
 
                 date_default_timezone_set('Europe/Berlin');
                 $date_today = date('Y-m-d', time());
@@ -114,7 +117,7 @@ am Tag der Abfrage Daten zurückgibt.*/
 
 
 <script>/*Initialisierung der Zeit Abfrage mit Einschränkung von "03:00" Uhr,
- da die API nur im Zeitraum ab 3 Uhr Daten übermittelt*/</script>
+da die API nur im Zeitraum ab 3 Uhr Daten übermittelt*/</script>
 
 
             <div class="input-group-append">
@@ -128,7 +131,7 @@ am Tag der Abfrage Daten zurückgibt.*/
 
 
         <div style="width: 100%; display:flex; justify-content: center;">
-            <input type="submit" value="Absenden" >
+            <input type="submit" value="Absenden">
         </div>
     </form>
 
